@@ -14,7 +14,7 @@ HP = 3
 
 W, H = 700, 500
 
-background = pg.transform.scale(pg.image.load('.jpg'), (W, H))
+background = pg.transform.scale(pg.image.load('поле.webp'), (W, H))
 
 #создай окно игры
 window = pg.display.set_mode((W, H))
@@ -55,34 +55,42 @@ class Lable(Area):
 
 class Game():
     run = True
-    finish = True
+    finish = False
     win = False
     lose = False
     sound_played = False
     objs = []
+    events = []
+    keys_pressed = {}
+
+
     
 
     def update(self):
-        pass
+        self.events = pg.event.get()
+        for event in self.events:
+            if event.type == pg.QUIT:
+                self.run = False
+
+        window.blit(background, (0, 0))
+
+        if self.finish == False:
+            player_1.update()
+            player_2.update()
+            
+            player_1.reset()
+            player_2.reset()
+            ball.reset()
+
+        
+
+
         
             
 
 
 
-    def start(self):
-        while game.run == True:
-            self.update()
-            btn_start.draw()
 
-            display.update()
-            clock.tick(FPS)
-
-    def add_handler(self, obj):
-        if obj in self.objs:
-            self.objs.remove(obj)
-        self.objs.append(obj)
-            
-        
 
 class GameSprite(pg.sprite.Sprite):
     def __init__(self, image_name, x, y, w, h, speed):
@@ -98,9 +106,9 @@ class GameSprite(pg.sprite.Sprite):
 class Player_1(GameSprite):
     def update(self):
         keys_pressed = pg.key.get_pressed()
-        if keys_pressed[pg.K_W] and self.rect.y >= 0:
-            self.rect.y += self.speed
-        if keys_pressed[pg.K_S] and self.rect.y <= 500:
+        if keys_pressed[pg.K_w] and self.rect.y >= 0:
+            self.rect.y -= self.speed
+        if keys_pressed[pg.K_s] and self.rect.y <= 420:
             self.rect.y += self.speed
 
 
@@ -108,17 +116,17 @@ class Player_2(GameSprite):
     def update(self):
         keys_pressed = pg.key.get_pressed()
         if keys_pressed[pg.K_UP] and self.rect.y >= 0:
-            self.rect.y += self.speed
-        if keys_pressed[pg.K_DOWN] and self.rect.y <= 500:
+            self.rect.y -= self.speed
+        if keys_pressed[pg.K_DOWN] and self.rect.y <= 420:
             self.rect.y += self.speed
 
 
 
 class Ball(GameSprite):
-    # colliderect == True -> умножаем x_speed и y_speed на -1
-    pass
-    self.x_speed = x_speed
-    self.y_speed = y_speed
+    def __init__(self, image_name, x, y, w, h, speed):
+        super().__init__(image_name, x, y, w, h, speed)
+        self.x_speed = speed
+        self.y_speed = speed
 
 
 
@@ -137,20 +145,15 @@ class Button(Lable):
         if not self.func is None:
             self.func()
 
-
 game = Game()
 
-def end_game():
-    game.run = False
-    btn_exit.visible = False
+player_1 = Player_1('Платформа.png', 50, 150, 30, 80, 10)
+player_2 = Player_2('Платформа.png', 150, 150, 30, 80, 10)
+ball = Ball('Мяч.png', 200, 300, 40, 40, 30)
 
 
-btn_exit.set_on_click(end_game)
-btn_start.set_on_click(start_level)
 
 
-game.levels[0].reload()
-btn_start.visible = True
 
 while game.run == True:
 
@@ -158,3 +161,5 @@ while game.run == True:
 
     pg.display.update()
     clock.tick(FPS)
+
+    
