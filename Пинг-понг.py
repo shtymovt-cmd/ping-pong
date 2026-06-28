@@ -77,6 +77,7 @@ class Game():
         if self.finish == False:
             player_1.update()
             player_2.update()
+            ball.update()
             
             player_1.reset()
             player_2.reset()
@@ -127,6 +128,14 @@ class Ball(GameSprite):
         super().__init__(image_name, x, y, w, h, speed)
         self.x_speed = speed
         self.y_speed = speed
+    def update(self):
+        self.rect.x += self.x_speed
+        self.rect.y += self.y_speed
+        if self.rect.y <= 0 or self.rect.y >= H - self.rect.height:
+            self.y_speed *= -1
+        if len(pg.sprite.spritecollide(ball, platforms, False)) != 0:
+            self.x_speed *= -1
+
 
 
 
@@ -148,8 +157,11 @@ class Button(Lable):
 game = Game()
 
 player_1 = Player_1('Платформа.png', 50, 150, 30, 80, 10)
-player_2 = Player_2('Платформа.png', 150, 150, 30, 80, 10)
-ball = Ball('Мяч.png', 200, 300, 40, 40, 30)
+player_2 = Player_2('Платформа.png', 620, 150, 30, 80, 10)
+platforms = pg.sprite.Group()
+platforms.add(player_1)
+platforms.add(player_2)
+ball = Ball('Мяч.png', 200, 300, 40, 40, 3)
 
 
 
