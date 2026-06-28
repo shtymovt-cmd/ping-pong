@@ -62,7 +62,7 @@ class Game():
     objs = []
     events = []
     keys_pressed = {}
-
+    last_hit = -1
 
     
 
@@ -82,6 +82,14 @@ class Game():
             player_1.reset()
             player_2.reset()
             ball.reset()
+            player1_text.draw()
+            player2_text.draw()
+
+        if self.finish == True and self.lose == True and self.last_hit == 1:
+            player1_lose_text.draw()
+        if self.finish == True and self.lose == True and self.last_hit == -1:
+            player2_lose_text.draw()
+            
 
         
 
@@ -132,9 +140,13 @@ class Ball(GameSprite):
         self.rect.x += self.x_speed
         self.rect.y += self.y_speed
         if self.rect.y <= 0 or self.rect.y >= H - self.rect.height:
-            self.y_speed *= -1
+            self.y_speed *= -1 
         if len(pg.sprite.spritecollide(ball, platforms, False)) != 0:
             self.x_speed *= -1
+            game.last_hit *= -1
+        if self.rect.x <= 0 or self.rect.x >= 700:
+            game.finish = True
+            game.lose = True
 
 
 
@@ -162,6 +174,10 @@ platforms = pg.sprite.Group()
 platforms.add(player_1)
 platforms.add(player_2)
 ball = Ball('Мяч.png', 200, 300, 40, 40, 3)
+player1_lose_text = Lable(text = 'Игрок 1 Проиграл!', x=235, y=200, width=100, height=40, bg_color = None, text_color = RED, fsize = 40)
+player2_lose_text = Lable(text = 'Игрок 2 Проиграл!', x=235, y=200, width=100, height=40, bg_color = None, text_color = RED, fsize = 40)
+player1_text = Lable(text = 'Игрок 1', x=35, y=20, width=100, height=40, bg_color = None, text_color = BLACK, fsize = 25)
+player2_text = Lable(text = 'Игрок 2', x=600, y=20, width=100, height=40, bg_color = None, text_color = BLACK, fsize = 25)
 
 
 
